@@ -1,11 +1,76 @@
-﻿@model IEnumerable<GigHub.Models.Gig>
+﻿@using GigHub.Models
+@model IEnumerable<GigHub.Models.Gig>
 @{
     ViewBag.Title = "Home Page";
 }
 
-<ul>
+<ul class="gigs">
     @foreach (var item in Model)
     {
-        <li>@item.Artist.Name - @item.DateTime - @item.Venue</li>
+        <li>
+            <div class="date">
+                <div class="month">
+                    @item.DateTime.ToString("MMM")
+                </div>
+                <div class="day">
+                    @item.DateTime.ToString("d ")
+                </div>
+
+            </div>
+            <div class="details">
+                <span class="artist">
+                    @item.Artist.Name
+                </span>
+                <span class="genre">
+                    @item.Genre.Name
+                </span>
+                <button data-gig-id="@item.Id" class="btn btn-sm btn-default js-toggle-attendence">
+                    Going ?
+                </button>
+                <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
+                    Follow
+                </button>
+            </div>
+        </li>
     }
 </ul>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-attendence").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/attendences", { gigId: button.attr("data-gig-id") })
+                    .done(function () {
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going");
+                    })
+                    .fail(function () {
+                        alert("Something failed!");
+                    });
+            });
+
+            $(".js-toggle-follow").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/followings", { followeeId: button.attr("data-user-id") })
+                    .done(function () {
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-warning")
+                            .text("Following");
+                    })
+                    .fail(function () {
+                        alert("Something failed!");
+                    });
+            });
+
+
+        });
+
+
+
+    </script>
+}
