@@ -1,11 +1,11 @@
 ﻿@using GigHub.Models
-@model IEnumerable<GigHub.Models.Gig>
+@model GigHub.ViewModels.HomeViewModel
 @{
     ViewBag.Title = "Home Page";
 }
 
 <ul class="gigs">
-    @foreach (var item in Model)
+    @foreach (var item in Model.LatestGigs)
     {
         <li>
             <div class="date">
@@ -24,12 +24,15 @@
                 <span class="genre">
                     @item.Genre.Name
                 </span>
-                <button data-gig-id="@item.Id" class="btn btn-sm btn-default js-toggle-attendence">
-                    Going ?
-                </button>
-                <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
-                    Follow
-                </button>
+                @if (Model.AutheticatedUser)
+                {
+                    <button data-gig-id="@item.Id" class="btn btn-sm btn-default js-toggle-attendence">
+                        Going ?
+                    </button>
+                    <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
+                        Follow
+                    </button>
+                }
             </div>
         </li>
     }
