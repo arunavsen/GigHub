@@ -37,12 +37,13 @@ namespace GigHub.Controllers
                 .Include(g=>g.Artist)
                 .Include(g=>g.Genre)
                 .ToList();
-            var viewModel = new HomeViewModel()
+            var viewModel = new GigsViewModel()
             {
                 LatestGigs = gigs,
-                AutheticatedUser = User.Identity.IsAuthenticated
+                AutheticatedUser = User.Identity.IsAuthenticated,
+                Heading = "Gigs I'm going"
             };
-            return View(viewModel);
+            return View("Gigs",viewModel);
         }
 
         [Authorize]

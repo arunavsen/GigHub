@@ -6,9 +6,10 @@ using GigHub.Models;
 
 namespace GigHub.ViewModels
 {
-    public class HomeViewModel
+    public class GigsViewModel
     {
         public IEnumerable<Gig> LatestGigs { get; set; }
         public bool AutheticatedUser { get; set; }
+        public string Heading { get; set; }
     }
 }

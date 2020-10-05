@@ -1,0 +1,31 @@
+﻿@model List<GigHub.Models.ApplicationUser>
+@{
+    ViewBag.Title = "Follow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="margin-bottom: 30px;">Artists, I'm Following</h1>
+<ul>
+    @foreach (var item in Model)
+    {
+
+        if (Model.Count != 0)
+        {
+            <li style="list-style: none">
+                <p class="h3">@item.Name</p>
+
+            </li>
+        }
+        else
+        {
+            <li>
+                <p>No results found.</p>
+
+            </li>
+        }
+
+    }
+</ul>
+
+
+

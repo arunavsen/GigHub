@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using GigHub.DTOs;
 using GigHub.Models;
+using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;
 
 namespace GigHub.Controllers
@@ -19,6 +21,8 @@ namespace GigHub.Controllers
         {
             _context = new ApplicationDbContext();
         }
+
+        
 
         [HttpPost]
         public IHttpActionResult Follow(FollowingDto dto)
