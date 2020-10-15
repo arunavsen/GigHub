@@ -19,12 +19,16 @@ namespace GigHub.Models
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Attendence> Attendences { get; set; }
         public DbSet<Following> Followings { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            //Each attendance has required at least one gig & each gig has many attendances.
             modelBuilder.Entity<Attendence>()
                 .HasRequired(u=>u.Gig)
-                .WithMany()
+                .WithMany(g=>g.Attendences)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ApplicationUser>()
@@ -35,6 +39,11 @@ namespace GigHub.Models
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(m => m.Followees)
                 .WithRequired(u=>u.Follower)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserNotification>()
+                .HasRequired(u=>u.User)
+                .WithMany(u=>u.UserNotifications)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

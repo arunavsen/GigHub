@@ -8,34 +8,47 @@
 <ul class="gigs">
     @foreach (var item in Model.LatestGigs)
     {
-        <li>
-            <div class="date">
-                <div class="month">
-                    @item.DateTime.ToString("MMM")
-                </div>
-                <div class="day">
-                    @item.DateTime.ToString("d ")
-                </div>
-
+    <li>
+        <div class="date">
+            <div class="month">
+                @item.DateTime.ToString("MMM")
             </div>
-            <div class="details">
-                <span class="artist">
-                    @item.Artist.Name
-                </span>
-                <span class="genre">
-                    @item.Genre.Name
-                </span>
-                @if (Model.AutheticatedUser)
+            <div class="day">
+                @item.DateTime.ToString("d ")
+            </div>
+
+        </div>
+        <div class="details">
+            <span class="artist">
+                @item.Artist.Name
+            </span>
+            <span class="genre">
+                @item.Genre.Name
+            </span>
+
+            @if (Model.AutheticatedUser)
+            {
+                if (!item.IsCanceled)
                 {
                     <button data-gig-id="@item.Id" class="btn btn-sm btn-default js-toggle-attendence">
                         Going ?
                     </button>
-                    <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
-                        Follow
-                    </button>
                 }
-            </div>
-        </li>
+
+                <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
+                    Follow
+                </button>
+            }
+
+
+        </div>
+        @if (item.IsCanceled)
+        {
+            <span class="label label-danger">
+                Cancelled
+            </span>
+        }
+    </li>
     }
 </ul>
 

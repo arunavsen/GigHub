@@ -1,0 +1,80 @@
+﻿@model IEnumerable<GigHub.Models.Gig>
+@{
+    ViewBag.Title = "Mine";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 style="margin-bottom: 30px;">My Upcoming Gigs</h1>
+<ul class="gigs">
+    @foreach (var item in Model)
+    {
+        <li>
+            <div class="date">
+                <div class="month">
+                    @item.DateTime.ToString("MMM")
+                </div>
+                <div class="day">
+                    @item.DateTime.ToString("d ")
+                </div>
+
+            </div>
+            <div class="details">
+                <span class="artist">
+                    @item.Venue
+                </span>
+                <span class="genre">
+                    @item.Genre.Name
+                </span>
+                <div class="actions">
+                    <a href="@Url.Action("Edit","Gigs",new{id=item.Id})">Edit</a> |
+                    <a class="" id="js-gig-cancel" data-gig-id="@item.Id" href="#">Cancle</a>
+
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+@section scripts
+{
+
+    <script>
+        $(document).ready(function () {
+            $("#js-gig-cancel").click(function (e) {
+                var link = $(e.target);
+                bootbox.dialog({
+                    title: 'Confrim',
+                    message: 'Are you sure to cancel this gig?',
+                    size: 'small',
+                    onEscape: true,
+                    backdrop: true,
+                    buttons: {
+                        No: {
+                            label: 'No',
+                            className: 'btn-default',
+                            callback: function () {
+                                bootbox.hideAll();
+                            }
+                        },
+                        Yes: {
+                            label: 'Yes',
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                        url: "/api/Gigs/" + link.attr("data-gig-id"),
+                                        method: "DELETE"
+                                    })
+                                    .done(function () {
+                                        link.parents("li").fadeOut(function () {
+                                            $(this).remove();
+                                        });
+                                    })
+                                    .fail(function () {
+                                        alert("Something Failed");
+                                    });
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

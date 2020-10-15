@@ -7,6 +7,7 @@ namespace GigHub.ViewModels
 {
     public class GIgFormViewModel
     {
+        public int Id { get; set; }
         [Required]
         [FutureDate]
         public string Date { get; set; }
@@ -18,6 +19,9 @@ namespace GigHub.ViewModels
         [Required]
         public int Genre { get; set; }
         public IEnumerable<Genre> Genres { get; set; }
+        public string Heading { get; set; }
+
+        public string Action => (Id != 0) ? "Edit":"Create";
 
         public DateTime GetDateTime()
         {
