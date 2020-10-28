@@ -30,9 +30,12 @@
 
         </div>
         <div class="details">
-            <span class="artist">
+            @*<span class="artist">
                 @item.Artist.Name
-            </span>
+            </span>*@
+            <a class="artist" href="@Url.Action("Details", "Gigs", new {id = item.Id})">
+                @item.Artist.Name
+            </a>
             <span class="genre">
                 @item.Genre.Name
             </span>
