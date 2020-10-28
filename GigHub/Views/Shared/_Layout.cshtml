@@ -39,5 +39,73 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script type="text/x-template" id="notifications-template">
+        <ul class="notifications">
+            <%
+            _.each(notifications, function(notification){
+
+            if(notification.notificationType == 1){%>
+            <li><span class="highlight"> <%= notifications.gig.artist.name %></span> has canceled the gig at <span class="highlight"><%= notification.gig.venue %></span> at <span class="highlight"><%= moment(notification.gig.date).format("D MMM HH:mm") %></span>. </li>
+            <%}
+
+            else if(notification.notificationType == 2){
+            var changes = [],
+            originalValues=[],
+            newValues=[];
+
+            if(notification.originalVanue != notification.gig.venue){
+            changes.push('venue');
+            originalValues.push(notification.originalVenue);
+            newValues.push(notification.gig.venue);
+            }
+
+            if(notification.originalDateTime != notification.gig.date){
+            changes.push('date/time');
+            originalValues.push(moment(notification.originalDateTime).format("D MMM HH:mm"));
+            newValues.push(moment(notification.gig.date).format("D MMM HH:mm"));
+            }
+            %>
+
+            <li> <span class="highlight"><%= notification.gig.artist.name %></span> has updated the <span class="highlight"><%= changes.join(' and ') %></span> of the gig from <span class="highlight"><%= originalValues.join(' / ') %></span> to <span class="highlight"><%= newValues.join(' / ') %></span> .  </li>
+            <%}
+            if(notification.notificationType == 3){%>
+            <li> <%= notification.gig.artist.name %> has created the gig at <%= notification.gig.venue %> at <%= notification.gig.date %>. </li>
+            <%}
+            })
+            %>
+        </ul>
+    </script>
+    <script>
+        $(document).ready(function () {
+            $.getJSON("/api/notifications",
+                function (notifications) {
+                    if (notifications.length === 0)
+                        return;
+                    $(".js-notifications-count")
+                        .text(notifications.length)
+                        .removeClass("hide");
+                    $(".notifications").popover({
+                        html: true,
+                        title: "Notifications",
+                        content: function () {
+                            var compiled = _.template($("#notifications-template").html());
+                            return compiled({ notifications: notifications });
+                        },
+                        placement: "bottom",
+                        template: '<div class="popover popover-notifications" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+                    }).on("shown.bs.popover", function () {
+                        $.post("/api/notifications/markAsRead")
+                            .done(function () {
+                                $(".js-notifications-count")
+                                    .text("")
+                                    .addClass("hide");
+                            });
+                    });
+                });
+
+        });
+    </script>
 </body>
 </html>
+

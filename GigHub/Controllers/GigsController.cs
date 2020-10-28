@@ -28,6 +28,11 @@ namespace GigHub.Controllers
             return View(viewModel);
         }
 
+        public ActionResult Search(GigsViewModel viewModel)
+        {
+            return RedirectToAction("Index", "Home",new {query = viewModel.SearchTerm});
+        }
+
         [Authorize]
         public ActionResult Edit(int id)
         {

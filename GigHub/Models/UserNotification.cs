@@ -30,6 +30,10 @@ namespace GigHub.Models
             User = user ?? throw new NullReferenceException("user");
             Notification = notification ?? throw new NullReferenceException("notification");
         }
+        public void Read()
+        {
+            IsRead = true;
+        }
 
     }
 }

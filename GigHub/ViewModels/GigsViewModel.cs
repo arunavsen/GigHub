@@ -11,5 +11,6 @@ namespace GigHub.ViewModels
         public IEnumerable<Gig> LatestGigs { get; set; }
         public bool AutheticatedUser { get; set; }
         public string Heading { get; set; }
+        public string SearchTerm { get; set; }
     }
 }
