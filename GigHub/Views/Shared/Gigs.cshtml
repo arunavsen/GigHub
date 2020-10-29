@@ -50,7 +50,7 @@
                         </button>
                     }
 
-                    <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
+                    <button data-user-id="@item.ArtistId" class="btn btn-sm @(Model.Following.Contains(item.ArtistId)? "btn-warning":"btn-default") pull-right js-toggle-follow">
                         Follow
                     </button>
                 }
@@ -103,16 +103,32 @@
 
             $(".js-toggle-follow").click(function (e) {
                 var button = $(e.target);
-                $.post("/api/followings", { followeeId: button.attr("data-user-id") })
-                    .done(function () {
-                        button
-                            .removeClass("btn-default")
-                            .addClass("btn-warning")
-                            .text("Following");
-                    })
-                    .fail(function () {
-                        alert("Something failed!");
-                    });
+                if (button.hasClass("btn-default")) {
+                    $.post("/api/followings", { followeeId: button.attr("data-user-id") })
+                        .done(function () {
+                            button
+                                .removeClass("btn-default")
+                                .addClass("btn-warning")
+                                .text("Following");
+                        })
+                        .fail(function () {
+                            alert("Something failed!");
+                        });
+                } else {
+                    $.ajax({
+                            url: "/api/followings/" + button.attr("data-user-id"),
+                            method: "DELETE"
+                        }).done(function () {
+                            button
+                                .removeClass("btn-warning")
+                                .addClass("btn-default")
+                                .text("Follow?");
+                        })
+                        .fail(function () {
+                            alert("Something failed!");
+                        });
+                }
+                
             });
 
 
