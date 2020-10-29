@@ -75,11 +75,19 @@ namespace GigHub.Controllers
                 .Include(g=>g.Artist)
                 .Include(g=>g.Genre)
                 .ToList();
+
+            var user = User.Identity.GetUserId();
+            var attendences = _context.Attendences
+                .Where(m => m.AttendeeId == user && m.Gig.DateTime > DateTime.Now)
+                .ToList()
+                .ToLookup(m => m.GigId);
+
             var viewModel = new GigsViewModel()
             {
                 LatestGigs = gigs,
                 AutheticatedUser = User.Identity.IsAuthenticated,
-                Heading = "Gigs I'm going"
+                Heading = "Gigs I'm going",
+                Attendences = attendences
             };
             return View("Gigs",viewModel);
         }

@@ -9,7 +9,7 @@
 {
     <div class="form-group">
         <div id="SearchGigs" class="input-group">
-            @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder="Search by Artist, Genre, Venue..." })
+            @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Search by Artist, Genre, Venue..." })
             <span class="input-group-addon">
                 <i class="glyphicon glyphicon-search"></i>
             </span>
@@ -19,50 +19,51 @@
 <ul class="gigs">
     @foreach (var item in Model.LatestGigs)
     {
-    <li>
-        <div class="date">
-            <div class="month">
-                @item.DateTime.ToString("MMM")
-            </div>
-            <div class="day">
-                @item.DateTime.ToString("d ")
-            </div>
+        <li>
+            <div class="date">
+                <div class="month">
+                    @item.DateTime.ToString("MMM")
+                </div>
+                <div class="day">
+                    @item.DateTime.ToString("d ")
+                </div>
 
-        </div>
-        <div class="details">
-            @*<span class="artist">
-                @item.Artist.Name
-            </span>*@
-            <a class="artist" href="@Url.Action("Details", "Gigs", new {id = item.Id})">
-                @item.Artist.Name
-            </a>
-            <span class="genre">
-                @item.Genre.Name
-            </span>
+            </div>
+            <div class="details">
+                @*<span class="artist">
+                        @item.Artist.Name
+                    </span>*@
+                <a class="artist" href="@Url.Action("Details", "Gigs", new {id = item.Id})">
+                    @item.Artist.Name
+                </a>
+                <span class="genre">
+                    @item.Genre.Name
+                </span>
 
-            @if (Model.AutheticatedUser)
-            {
-                if (!item.IsCanceled)
+                @if (Model.AutheticatedUser)
                 {
-                    <button data-gig-id="@item.Id" class="btn btn-sm btn-default js-toggle-attendence">
-                        Going ?
+                    if (!item.IsCanceled)
+                    {
+                        <button data-gig-id="@item.Id"
+                                class="btn btn-sm @(Model.Attendences.Contains(item.Id)?"btn-info":"btn-default" ) js-toggle-attendence">
+                            Going ?
+                        </button>
+                    }
+
+                    <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
+                        Follow
                     </button>
                 }
 
-                <button data-user-id="@item.ArtistId" class="btn btn-sm btn-default pull-right js-toggle-follow">
-                    Follow
-                </button>
+
+            </div>
+            @if (item.IsCanceled)
+            {
+                <span class="label label-danger">
+                    Cancelled
+                </span>
             }
-
-
-        </div>
-        @if (item.IsCanceled)
-        {
-            <span class="label label-danger">
-                Cancelled
-            </span>
-        }
-    </li>
+        </li>
     }
 </ul>
 
@@ -72,16 +73,32 @@
         $(document).ready(function () {
             $(".js-toggle-attendence").click(function (e) {
                 var button = $(e.target);
-                $.post("/api/attendences", { gigId: button.attr("data-gig-id") })
-                    .done(function () {
+                if (button.hasClass("btn-default")) {
+                    $.post("/api/attendences", { gigId: button.attr("data-gig-id") })
+                        .done(function () {
+                            button
+                                .removeClass("btn-default")
+                                .addClass("btn-info")
+                                .text("Going");
+                        })
+                        .fail(function () {
+                            alert("Something failed!");
+                        });
+                } else {
+                    $.ajax({
+                        url: "/api/attendences/" + button.attr("data-gig-id"),
+                        method: "DELETE"
+                    }).done(function () {
                         button
-                            .removeClass("btn-default")
-                            .addClass("btn-info")
-                            .text("Going");
+                            .removeClass("btn-info")
+                            .addClass("btn-default")
+                            .text("Going?");
                     })
-                    .fail(function () {
-                        alert("Something failed!");
-                    });
+                        .fail(function () {
+                            alert("Something failed!");
+                        });
+                }
+
             });
 
             $(".js-toggle-follow").click(function (e) {
