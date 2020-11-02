@@ -6,7 +6,7 @@ using GigHub.Models;
 
 namespace GigHub.Repository
 {
-    public class FollowRepository
+    public class FollowRepository : IFollowRepository
     {
         private readonly ApplicationDbContext _context;
 

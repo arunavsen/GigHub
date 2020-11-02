@@ -7,7 +7,7 @@ using GigHub.Models;
 
 namespace GigHub.Repository
 {
-    public class GigRepository
+    public class GigRepository : IGigRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -63,6 +63,11 @@ namespace GigHub.Repository
         public bool GigDetailsIsAttending(string user, Gig gigs)
         {
             return _context.Attendences.Any(m => m.AttendeeId == user && m.GigId == gigs.Id);
+        }
+
+        IEnumerable<Gig> IGigRepository.GetUpcomingGigsByArtist(string user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

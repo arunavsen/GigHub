@@ -14,13 +14,11 @@ namespace GigHub.Controllers
 {
     public class GigsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GigsController()
+        public GigsController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
-            _unitOfWork = new UnitOfWork(_context);
+            _unitOfWork = unitOfWork;
         }
         
         [Authorize]
@@ -57,7 +55,7 @@ namespace GigHub.Controllers
             var viewModel = new GIgFormViewModel()
             {
                 Id = gigs.Id,
-                Genres = _context.Genres.ToList(),
+                Genres = new ApplicationDbContext().Genres.ToList(),
                 Date = gigs.DateTime.ToString("d MMM yyyy"),
                 Time = gigs.DateTime.ToString("HH:mm"),
                 Venue = gigs.Venue,
@@ -122,7 +120,7 @@ namespace GigHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                gIgFormViewModel.Genres = _context.Genres.ToList();
+                gIgFormViewModel.Genres = new ApplicationDbContext().Genres.ToList();
                 return View("Create",gIgFormViewModel);
             }
 
@@ -176,7 +174,8 @@ namespace GigHub.Controllers
 
         public ActionResult Details(int id)
         {
-            var gigs = _context.Gigs
+            var context = new ApplicationDbContext();
+            var gigs = context.Gigs
                 .Include(m=>m.Artist)
                 .Include(m=>m.Genre)
                 .SingleOrDefault(m => m.Id == id);
@@ -194,9 +193,9 @@ namespace GigHub.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = User.Identity.GetUserId();
-                gigDetails.IsAttending = _context.Attendences.Any(m => m.AttendeeId == user && m.GigId == gigs.Id);
+                gigDetails.IsAttending = context.Attendences.Any(m => m.AttendeeId == user && m.GigId == gigs.Id);
                 gigDetails.IsFollowing =
-                    _context.Followings.Any(m => m.FollowerId == user && m.FolloweeId == gigs.ArtistId);
+                    context.Followings.Any(m => m.FollowerId == user && m.FolloweeId == gigs.ArtistId);
 
             }
 

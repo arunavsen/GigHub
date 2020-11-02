@@ -8,17 +8,17 @@ using GigHub.Repository;
 
 namespace GigHub.Persistance
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
 
-        public GigRepository Gigs { get; private set; }
+        public IGigRepository Gigs { get; private set; }
 
-        public AttendenceRepository Attendence { get; private set; }
+        public IAttendenceRepository Attendence { get; private set; }
 
-        public GenreRepository Genre { get; private set; }
+        public IGenreRepository Genre { get; private set; }
 
-        public FollowRepository Follow { get; private set; }
+        public IFollowRepository Follow { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
